@@ -1,0 +1,89 @@
+A)
+
+SSELECT V.codevillage, nomvillage, nomActivite, prixActivite
+FROM AVILNAT.village v
+INNER JOIN avilnat.activillage av ON av.codevillage = v.codevillage
+INNER JOIN avilnat.activite a ON a.numactivite = av.numactivite
+WHERE prixactivite = 
+( 
+SELECT MIN(prixactivite)
+FROM avilnat.activillage
+WHERE codevillage = v.codevillage
+);
+
+B) 
+
+1. 
+SELECT nomvillage
+FROM avilnat.village v
+INNER JOIN avilnat.activillage av1 ON v.codevillage = av1.codevillage
+INNER JOIN avilnat.activite a1 ON  a1.numactivite = av1.numactivite
+INNER JOIN avilnat.activillage av2 ON v.codevillage = av2.codevillage
+INNER JOIN avilnat.activite a2 ON  a2.numactivite = av2.numactivite
+WHERE a1.nomActivite ='Piscine' AND a2.nomactivite='Excursion'
+
+2.
+SELECT nomvillage
+FROM avilnat.village
+NATURAL JOIN avilnat.activillage
+NATURAL JOIN avilnat.activite
+WHERE nomactivite='Piscine'
+AND codevillage In 
+(SELECT codevillage
+FROM avilnat.activillage 
+NATURAL JOIN avilnat.activite
+WHERE nomactivite='Excursion')
+
+3.
+SELECT codevillage, nomvillage
+FROM avilnat.village
+NATURAL JOIN avilnat.activillage
+NATURAL JOIN avilnat.activite
+WHERE nomactivite IN ('Piscine', 'Excursion')
+GROUP BY codevillage, nomvillage
+HAVING COUNT(*)=2;
+
+C)
+
+SELECT nomvillage
+FROM avilnat.village
+NATURAL JOIN avilnat.activillage
+WHERE prixactivite<6
+GROUP BY nomvillage
+HAVING COUNT(*)>=2
+
+D)
+
+SELECT distinct nomvillage
+FROM avilnat.village
+NATURAL JOIN avilnat.compovillages
+NATURAL JOIN avilnat.maison
+WHERE codevillage  NOT In 
+(SELECT codevillage
+FROM avilnat.compovillages
+NATURAL JOIN avilnat.maison
+WHERE nom='Eden')        
+AND codevillage  NOT In 
+(SELECT codevillage
+FROM avilnat.compovillages
+NATURAL JOIN avilnat.maison
+WHERE nom='Azur');   
+
+
+SELECT distinct nomvillage
+FROM avilnat.village
+WHERE codevillage  NOT In 
+(SELECT codevillage
+FROM avilnat.compovillages
+NATURAL JOIN avilnat.maison
+WHERE nom IN ('Azur', 'Eden'));
+
+E)
+
+SELECT codevillage, nomvillage, nom
+FROM avilnat.village v, maison
+WHERE typemaison NOT IN 
+(SELECT typemaison 
+FROM avilnat.compovillages
+WHERE codevillage = V.codevillage)
+ORDER BY codevillage

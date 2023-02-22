@@ -1,0 +1,39 @@
+1)
+
+a)
+before table
+before ligne
+after ligne
+after table
+
+Insert into location values
+(1, 180, '05/10/2015', '06/10/2015', NULL);
+
+numlog	numexemplaire		message			datelocation	dateenvoi
+1	null			debut insertion		null		null
+2	null			debut ligne		null		null
+3	180			fin ligne		05/10/2015	null
+4	null			fin insertion		null		null
+
+b)
+Insert into location values(1, 3481, '06/10/2015', NULL, NULL);
+Insert into location values(1, 4573, '06/10/2015', NULL, NULL);
+Update location set dateEnvoi='07/10/2015' where login=1;
+
+numlog	numexemplaire		message			datelocation	dateenvoi
+5	null			debut insertion		null		null
+6	null			debut ligne		null		null
+7	3481			fin ligne		06/10/2015	null
+8	null			fin insertion		null		null
+9	null			debut insertion		null		null
+10	null			debut ligne		null		null
+11	4573			fin ligne		06/10/2015	null
+12	null			fin insertion		null		null
+13	null			debut modif		null		null
+14	null			debut ligne		null		null
+15	180			fin ligne		05/10/2015	null
+16	null			debut ligne		null		null
+17	3481			fin ligne		06/10/2015	null
+18	null			debut ligne		null		null
+19	4573			fin ligne		06/10/2015	null
+20	null			fin modif		null		null

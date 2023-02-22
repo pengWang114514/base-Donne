@@ -1,0 +1,94 @@
+QUESTION 1
+
+Set SERVEROUT ON;
+DECLARE
+    nbComedie NUMBER(4);
+BEGIN
+    SELECT COUNT(*) into nbComedie
+    FROM ens2004.genrefilm natural Join ens2004.GENRE
+    Where libelleGenre LIKE 'COMEDIE%';
+    
+DBMS_OUTPUT.PUT_LINE('Il y a '|| nbComedie ||' Comedie');    
+    END;
+
+QUESTION 2
+
+Set SERVEROUT ON;
+DECLARE
+    TitreFilm varchar(50);
+    prenomReal varchar(20);
+    nomReal varchar(20);
+    numReal varchar(5);
+BEGIN
+    SELECT titre,realisateur into TitreFilm, numReal
+    FROM ens2004.FILM
+    Where numFilm = 6693;
+    SELECT nomindividu,prenomindividu into nomReal, prenomReal
+    FROM ens2004.INDIVIDU
+    WHERE numIndividu = numReal;
+    
+DBMS_OUTPUT.PUT_LINE('Le film est '|| TitreFilm ||' son realisateur est ' || prenomReal ||' '|| nomReal||'');    
+    END;
+
+Question 3
+
+DECLARE
+    nbTruffaut NUMBER(2);
+    idTruffaut NUMBER(5);
+    nbFilmTruffaut NUMBER(3);
+BEGIN
+    SELECT COUNT(*) into nbTruffaut
+        FROM ENS2004.Individu
+        WHERE nomIndividu = 'TRUFFAUT';
+
+    SELECT numIndividu into idTruffaut
+        FROM ENS2004.Individu
+        WHERE nomIndividu = 'TRUFFAUT';
+
+    SELECT COUNT(*) into nbFilmTruffaut
+        FROM ENS2004.Film
+        WHERE realisateur = idTruffaut;
+
+    DBMS_OUTPUT.PUT_LINE('il y a ' || nbTruffaut || ' Truffaut et il a réalisé ' || nbFilmTruffaut || ' films');
+end;
+
+Question 4
+
+
+DECLARE
+    nbTruffaut NUMBER(5);
+    codeTruffaut NUMBER(5);
+    nbFilm NUMBER(5);
+    pasDeTruffaut EXCEPTION;
+    tropDeTruffaut EXCEPTION;
+    nbActeurTruffaut NUMBER(5);
+BEGIN
+    SELECT COUNT(*) into nbTruffaut
+    FROM ENS2004.INDIVIDU
+    WHERE nomIndividu = 'TRUFFAUT';
+    DBMS_OUTPUT.PUT_LINE('Il y a : '|| nbTruffaut ||' individu.');
+    IF nbTruffaut = 0 THEN RAISE pasDeTruffaut;
+    ELSE IF nbTruffaut > 1 THEN RAISE tropDeTruffaut;
+    END IF;
+    END IF;
+
+    SELECT numIndividu into codeTruffaut
+    FROM ENS2004.INDIVIDU
+    WHERE nomIndividu = 'TRUFFAUT';
+
+    SELECT COUNT(*) into nbFilm
+    FROM ENS2004.FILM
+    WHERE realisateur = codeTruffaut;
+    DBMS_OUTPUT.PUT_LINE('Il a réalisé : '|| nbFilm ||' films.');
+
+        SELECT COUNT(*) into nbActeurTruffaut
+    FROM ENS2004.ACTEUR
+    WHERE numIndividu = codeTruffaut;
+    DBMS_OUTPUT.PUT_LINE('Il y a : '|| nbActeurTruffaut ||' acteurs.');
+
+    EXCEPTION
+    WHEN pasDeTruffaut THEN
+    DBMS_OUTPUT.PUT_LINE('Il n''y a pas de M.Truffaut.');
+    WHEN tropDeTruffaut THEN
+    DBMS_OUTPUT.PUT_LINE('Il y a plusieurs M.Truffaut.');
+end; 

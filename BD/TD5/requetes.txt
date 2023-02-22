@@ -1,0 +1,47 @@
+I.
+
+1)
+SELECT numfilm, titre
+FROM ens2004.film
+where numFilm not in (SELECT numfilm 
+FROM ens2004.exemplaire)
+
+2)
+SELECT nomindividu, prenomindividu
+FROM ens2004.individu
+WHERE numindividu not in (SELECT numindividu
+FROM ens2004.acteur) AND numindividu not in (SELECT realisateur
+FROM ens2004.film)
+
+3)
+SELECT nomindividu, prenomindividu
+FROM ens2004.individu I
+JOIN ens2004.film F ON F.realisateur = I.numindividu
+GROUP BY nomindividu, prenomindividu, numindividu
+HAVING count(*) > (SELECT count(*) FROM ens2004.acteur A WHERE I.numindividu = A.numindividu)
+
+4)
+SELECT COUNT(distinct numindividu)  AS NbActeurRea
+FROM ens2004.FILM F
+INNER JOIN ens2004.ACTEUR A ON F.realisateur = A.numindividu
+WHERE A.numfilm = F.numfilm
+
+II.
+
+1)
+CREATE OR REPLACE VIEW vfilm AS
+SELECT numFilm, COUNT(*) AS NbExemplaire
+FROM ens2004.exemplaire
+GROUP BY numfilm
+
+2)
+CREATE OR REPLACE VIEW Vacteur AS
+SELECT distinct numindividu, nomindividu, prenomindividu
+FROM ens2004.individu
+NATURAL JOIN ens2004.acteur A
+
+3)
+CREATE OR REPLACE VIEW VFilmReal AS
+SELECT titre, prenomIndividu, nomIndividu
+FROM ens2004.film
+INNER JOIN ens2004.individu ON realisateur = numindividu

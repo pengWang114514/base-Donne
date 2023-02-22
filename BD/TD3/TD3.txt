@@ -1,0 +1,114 @@
+A.
+
+1) 
+PERIODE
+ACTIVITE
+MAISON
+VILLAGE
+ACTIVILLAGE
+COMPOVILLAGE
+TARIF
+
+2) Maison : contrainte capacité >0
+
+/*
+DROP TABLE TARIF;
+DROP TABLE PERIODE;
+DROP TABLE COMPOVILLAGE;
+DROP TABLE VILLAGE; 
+DROP TABLE MAISON; 
+*/
+
+
+CREATE TABLE Maison
+(
+    TypeMaison NUMBER(2,0) PRIMARY KEY,
+    Nom VARCHAR(30),
+    Capacite NUMBER(1,0) NOT NULL,
+    CONSTRAINT verifCap CHECK (Capacite>0 AND Capacite<20)
+);
+
+CREATE TABLE Village
+(
+    CodeVillage NUMBER(3,0) PRIMARY KEY,
+    NomVillage VARCHAR(10),
+    Situation VARCHAR(20),
+    CONSTRAINT verifSituation CHECK(Situation IS NULL OR Situation IN('Mer', 'Campagne', 'Montagne'))
+);
+
+CREATE TABLE CompoVillage
+(
+    CodeVillage NUMBER(3,0),
+    TypeMaison NUMBER(2,0),
+    NombreMaison NUMBER(3,0) NOT NULL,
+    CONSTRAINT cleCompo PRIMARY KEY (CodeVillage, TypeMaison),
+    CONSTRAINT verifNbMaison CHECK (NombreMaison>0),
+    CONSTRAINT cirVillage FOREIGN KEY (CodeVillage) REFERENCES Village,
+    CONSTRAINT cirMaison FOREIGN KEY (TypeMaison) REFERENCES Maison
+);
+
+CREATE TABLE Periode
+(
+    CodePeriode VARCHAR(2),
+    NomPeriode VARCHAR(20) NOT NULL,
+    CONSTRAINT clePeriode PRIMARY KEY (CodePeriode),
+    CONSTRAINT verifCode CHECK(CodePeriode = 'HS' OR CodePeriode = 'PS')
+);
+
+CREATE TABLE Tarif
+(
+    CodeVillage NUMBER(3,0),
+    TypeMaison NUMBER(2,0),
+    CodePeriode VARCHAR(2),
+    PrixSemaine NUMBER(4,0),
+    CONSTRAINT cleTarif PRIMARY KEY (CodeVillage, TypeMaison, CodePeriode),
+    CONSTRAINT cirCompo FOREIGN KEY (CodeVillage, TypeMaison) REFERENCES CompoVillage,
+    CONSTRAINT cirPeriode FOREIGN KEY (CodePeriode) REFERENCES Periode,
+    CONSTRAINT verifPrix CHECK (PrixSemaine>0)
+);
+
+B.
+
+1)
+INSERT INTO Village VALUES (1,'Prémanon', NULL);
+INSERT INTO Village VALUES (2, 'Lélex', 'Montagne');
+INSERT INTO Maison VALUES (1, 'Evasion', 2);
+INSERT INTO Maison VALUES (6, 'Détente', 6);
+
+INSERT INTO CompoVillage VALUES (3,6,1); -> ERREUR : clé parent introuvable, on n'a pas créé le village 3
+
+INSERT INTO Village VALUES (6, 'Vendes', NULL);
+UPDATE Village SET Situation='Campagne' WHERE CodeVillage=6;
+
+2)
+INSERT INTO Village VALUES (9,'Ars-en-Ré', 'Mer');
+INSERT INTO CompoVillage VALUES(9,6,10);
+
+INSERT INTO Maison VALUES (7,'Famille', 8);
+INSERT INTO CompoVillage VALUES (9,7,2);
+
+3)
+UPDATE CompoVillage SET NombreMaison=7 WHERE CodeVillage=9 AND TypeMaison=6;
+
+4)
+ALTER TABLE Maison MODIFY TypeMaison NUMBER(3,0);
+
+5)
+ERREUR : On n'a pas ajouté de maison dans CompoVillage pour Prémanon 
+donc on ne peut pas modifier quelque chose qui n'existe pas
+
+6)
+DROP TABLE TARIF;
+DROP TABLE PERIODE;
+ On perd les données des 2 tables
+
+7)
+UPDATE Tarif SET PrixSemaine=PrixSemaine+50 WHERE CodeVillage=4;
+
+8)
+ALTER TABLE Village DROP CONSTRAINT verifSituation;
+ALTER TABLE Village ADD CONSTRAINT verifSituation CHECK(Situation IS NULL 
+OR Situation IN('Mer', 'Campagne', 'Montagne', 'Moyenne Montagne'));
+
+UPDATE Village SET Situation='Moyenne Montagne' WHERE CodeVillage=1;
+SELECT * FROM Village;

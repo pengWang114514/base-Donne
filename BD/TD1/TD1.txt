@@ -1,0 +1,86 @@
+1a) 
+Affiche le prix mini pour une semaine dans une pleine saison pour le type de maison 6
+=680
+
+b)
+Affiche le code du village et son nom lors d'une pleine saison qui possède des maisons de type 6 les moins chères
+en pleine saison.
+=
+
+c)
+SELECT C.CodeVillage, NomVillage
+FROM avilnat.CompoVillages C INNER JOIN  avilnat.Maison M ON (C.TypeMaison = M.TypeMaison) 
+INNER JOIN avilnat.Village V ON (V.CodeVillage=C.CodeVillage)
+WHERE Capacite = 6
+GROUP BY C.CodeVillage , NomVillage
+HAVING COUNT(*) = (SELECT COUNT(*) FROM avilnat.Maison
+WHERE Capacite = 6);
+
+Donner le nom et le code des villages qui proposent tous les types des maisons de capacité 6
+
+5 Obernai
+11 Argol
+8 Port-Bail
+9 Ars-en-Ré
+
+2)
+
+a)
+SELECT nomVillage, nomActivite
+FROM avilnat.Village V
+INNER JOIN avilnat.activillage AV ON V.codevillage = AV.codevillage
+INNER JOIN avilnat.activite A ON AV.numactivite = A.numactivite
+WHERE PrixActivite < 3;
+
+b)
+SELECT MAX(prixactivite)
+FROM avilnat.activillage AV
+INNER JOIN avilnat.village V ON AV.codevillage = V.codevillage
+WHERE v.nomvillage='Prémanon';
+
+SELECT DISTINCT nomvillage 
+FROM avilnat.village V
+INNER JOIN avilnat.activillage AV ON V.codevillage = AV.codevillage
+WHERE prixactivite > (SELECT MAX(prixactivite)
+FROM avilnat.activillage AV
+INNER JOIN avilnat.village V ON AV.codevillage = V.codevillage
+WHERE v.nomvillage='Prémanon');
+
+
+c)
+SELECT COUNT(*)
+FROM avilnat.activillage AV
+INNER JOIN avilnat.village V ON AV.codevillage = V.codevillage
+WHERE nomvillage = 'Vendes';
+
+
+SELECT nomvillage
+FROM avilnat.village V 
+INNER JOIN avilnat.activillage AV ON V.codevillage = AV.codevillage 
+GROUP BY nomvillage
+HAVING COUNT(*) > (SELECT COUNT(*)
+FROM avilnat.activillage AV
+INNER JOIN avilnat.village V ON AV.codevillage = V.codevillage
+WHERE nomvillage = 'Vendes');
+
+d)
+SELECT DISTINCT nomActivite
+FROM avilnat.activite A
+INNER JOIN avilnat.activillage AV ON A.numactivite = AV.numactivite
+INNER JOIN avilnat.village V ON AV.codevillage = V.codevillage
+WHERE situation = 'Montagne'
+
+e)
+SELECT COUNT(*)
+FROM AVILNAT.VILLAGE V
+WHERE situation = 'Montagne');
+
+SELECT nomActivite
+FROM AVILNAT.ACTIVITE A
+INNER JOIN AVILNAT.ACTIVILLAGE AV ON AV.numActivite = A.numActivite
+INNER JOIN AVILNAT.VILLAGE V ON V.codeVillage = AV.codeVillage
+WHERE situation = 'Montagne'
+GROUP BY nomActivite
+HAVING COUNT(*) = (SELECT COUNT(*)
+FROM AVILNAT.VILLAGE V
+WHERE situation = 'Montagne');
